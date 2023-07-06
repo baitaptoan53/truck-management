@@ -25,7 +25,13 @@ import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';                   // optional
+import Row from 'primevue/row';
+import InputText from 'primevue/inputtext'               // optional
+import Password from 'primevue/password'
+import Checkbox from 'primevue/checkbox'
+import Toast from 'primevue/toast'
+import StyleClass from 'primevue/styleclass'
+
 
 import CodeHighlight from '@/components/CodeHighlight.vue'
 import BlockViewer from '@/components/BlockViewer.vue'
@@ -36,6 +42,7 @@ const app = createApp(App)
 app.use(PrimeVue, { ripple: true })
 app.component('CodeHighlight', CodeHighlight)
 app.component('BlockViewer', BlockViewer)
+app.directive('styleclass', StyleClass)
 
 // Register PrimeVue components
 app.component('Button', Button)
@@ -53,6 +60,10 @@ app.component('DataTable', DataTable)
 app.component('Column', Column)
 app.component('ColumnGroup', ColumnGroup)
 app.component('Row', Row)
+app.component('InputText', InputText)
+app.component('Password', Password)
+app.component('Checkbox', Checkbox)
+app.component('Toast', Toast)
 
 app.use(router)
 
