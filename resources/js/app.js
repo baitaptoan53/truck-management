@@ -2,12 +2,14 @@ import { createApp } from 'vue'
 import router from './router/index.js'
 
 import App from './App.vue'
+// bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css'
 //theme
-import "primevue/resources/themes/lara-light-indigo/theme.css";     
-    
-import 'primeicons/primeicons.css'; //icons
+import 'primevue/resources/themes/lara-light-indigo/theme.css'
+
+import 'primeicons/primeicons.css' //icons
 //core
-import "primevue/resources/primevue.min.css";
+import 'primevue/resources/primevue.min.css'
 // Import PrimeVue components
 import PrimeVue from 'primevue/config'
 import Button from 'primevue/button'
@@ -24,14 +26,13 @@ import Calendar from 'primevue/calendar'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';
-import InputText from 'primevue/inputtext'               // optional
+import ColumnGroup from 'primevue/columngroup' // optional
+import Row from 'primevue/row'
+import InputText from 'primevue/inputtext' // optional
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Toast from 'primevue/toast'
 import StyleClass from 'primevue/styleclass'
-
 
 import CodeHighlight from '@/components/CodeHighlight.vue'
 import BlockViewer from '@/components/BlockViewer.vue'
