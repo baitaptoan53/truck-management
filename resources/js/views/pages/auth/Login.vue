@@ -2,9 +2,10 @@
 import { useLayout } from '@/layout/composables/layout';
 import { ref, computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
-
+import axios from 'axios';
 import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
+
 const schema = yup.object({
   email: yup.string()
     .required('Email không được bỏ trống')
@@ -18,6 +19,7 @@ const logoUrl = computed(() => {
   return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
 });
 </script>
+
 
 <template>
   <div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
@@ -36,17 +38,17 @@ const logoUrl = computed(() => {
             <a href="#" class="social-login-link"><i class="pi pi-google"></i></a>
           </div>
           <div>
-            <VeeForm v-slot="{ submitForm }" :validation-schema="schema" as="div">
-              <form @submit="submitForm" method="post" action="/api/users/">
+            <VeeForm v-slot="{submitForm }" :validation-schema="schema" as="div">
+              <form @submit="submitForm" @submit.prevent="login">
                 <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-                <Field name="email" type="email" placeholder="Email address" class="w-full md:w-30rem mb-5"
-                  style="padding: 1rem" />
+                <Field name="email" type="email" placeholder="Địa chỉ Email" class="w-full md:w-30rem mb-5"
+                  style="padding: 1rem" v-model="email" />
                 <div>
                   <ErrorMessage name="email" class="text-danger" />
                 </div>
                 <label for="password" class="block text-900 text-xl font-medium mb-2">Mật khẩu</label>
                 <Field name="password" type="password" placeholder="Mật khẩu" class="w-full md:w-30rem mb-5"
-                  style="padding: 1rem" />
+                  style="padding: 1rem" v-model="password" />
                 <div>
                   <ErrorMessage name="password" class="text-danger" />
                 </div>
@@ -68,9 +70,35 @@ const logoUrl = computed(() => {
   </div>
   <AppConfig simple />
 </template>
+<script>
+import axios from 'axios';
 
-        <!-- hiển thị list các trang mạng xã hội cho người dùng đăng nhập -->
+export default {
+  // Các phần khác của component
+  methods: {
+    login() {
 
+      axios.post('http://127.0.0.1:8000/api/login', {
+        email: 'baitaptoan53@gmail.com',
+        password: '1234567891'
+      })
+        .then(response => {
+          // Xử lý phản hồi thành công
+          const { user, authorization } = response.data;
+          // Lưu token vào localStorage hoặc Vuex
+          localStorage.setItem('token', authorization.token);
+          // Tiến hành đăng nhập
+          // Chuyển hướng hoặc làm bất kỳ điều gì sau khi đăng nhập thành công
+        })
+        .catch(error => {
+          // Xử lý lỗi
+          console.log(error.response.data.message);
+          this.error = error.response.data.message;
+        });
+    }
+  }
+};
+</script>
 <style scoped>
 .pi-eye {
   transform: scale(1.6);
@@ -96,3 +124,4 @@ const logoUrl = computed(() => {
   transition: background-color 0.2s ease-in-out;
 }
 </style>
+
