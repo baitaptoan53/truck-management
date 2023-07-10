@@ -1,7 +1,6 @@
 <script setup>
 import { FilterMatchMode } from 'primevue/api';
 import { ref, onMounted, onBeforeMount } from 'vue';
-import ProductService from '@/service/ProductService';
 import { useToast } from 'primevue/usetoast';
 
 
@@ -16,9 +15,29 @@ import { useToast } from 'primevue/usetoast';
                                                                            :rowsPerPageOptions="[5, 10, 20, 50]"
                                                                            :globalFilterFields="['name', 'phone', 'email', 'role', 'status']"
                                                                            :loading="loading" v-model:filters="filters"
-                                                                           @row-edit-save="onRowEditSave" ref="dt">
+                                                                           @row-edit-save="onRowEditSave" ref="dt"
+                                                                           v-model:selection="selectedUsers" dataKey="id">
                                                                            <template #header>
                                                                                           <div class="flex justify-content-end">
+                                                                                                         <div style="text-align: left"
+                                                                                                                        class="mr-2">
+                                                                                                                        <Button icon="pi pi-plus"
+                                                                                                                                       label="Thêm mới"
+                                                                                                                                       @click="onAddNewUser"
+                                                                                                                                       severity="success" />
+                                                                                                         </div>
+                                                                                                         <!-- delete -->
+                                                                                                         <div style="text-align: left"
+                                                                                                                        class="mr-2">
+                                                                                                                        <Button icon="pi pi-trash"
+                                                                                                                                       label="Xóa"
+                                                                                                                                       @click="confirmDeleteSelected"
+                                                                                                                                       :disabled="!selectedUsers || !selectedUsers.length"
+                                                                                                                                       class="p-button-danger" />
+                                                                                                         </div>
+
+
+
                                                                                                          <div style="text-align: left"
                                                                                                                         class="mr-2">
                                                                                                                         <Button icon="pi pi-external-link"
@@ -37,6 +56,8 @@ import { useToast } from 'primevue/usetoast';
                                                                            <template #empty> No customers found. </template>
                                                                            <template #loading> Loading customers data. Please
                                                                                           wait.</template>
+                                                                           <Column selectionMode="multiple" headerStyle="width: 3rem">
+                                                                           </Column>
                                                                            <Column field="name" header="Name" sortable>
                                                                                           <template #body="{ data }">
                                                                                                          {{ data.name }}
@@ -111,10 +132,53 @@ import { useToast } from 'primevue/usetoast';
                                                                                                                         placeholder="Tìm theo trạng thái" />
                                                                                           </template>
                                                                            </Column>
-                                                                           <Column :rowEditor="true"
-                                                                                          style="width: 10%; min-width: 8rem"
-                                                                                          bodyStyle="text-align:center"></Column>
+                                                                           <Column :exportable="false" style="min-width:9rem">
+                                                                                          <template #body="slotProps">
+                                                                                                         <Button icon="pi pi-pencil"
+                                                                                                                        outlined
+                                                                                                                        rounded
+                                                                                                                        class="mr-2"
+                                                                                                                        @click="editUser(slotProps.data)" />
+                                                                                                         <Button icon="pi pi-trash"
+                                                                                                                        outlined
+                                                                                                                        rounded
+                                                                                                                        severity="danger"
+                                                                                                                        @click="confirmDeleteUser(slotProps.data)" />
+                                                                                          </template>
+                                                                           </Column>
+
                                                             </DataTable>
+
+                                                            <Dialog v-model:visible="deleteUserDialog" :style="{ width: '450px' }"
+                                                                           header="Confirm" :modal="true">
+                                                                           <div class="confirmation-content">
+                                                                                          <i class="pi pi-exclamation-triangle mr-3"
+                                                                                                         style="font-size: 2rem" />
+                                                                                          <span v-if="user">Bạn muốn xóa người dùng
+                                                                                                         <b>{{ user.name }}</b>?</span>
+                                                                           </div>
+                                                                           <template #footer>
+                                                                                          <Button label="No" icon="pi pi-times" text
+                                                                                                         @click="deleteUserDialog = false" />
+                                                                                          <Button label="Yes" icon="pi pi-check" text
+                                                                                                         @click="deleteUser" />
+                                                                           </template>
+                                                            </Dialog>
+                                                            <Dialog v-model:visible="deleteUsersDialog" :style="{ width: '450px' }"
+                                                                           header="Confirm" :modal="true">
+                                                                           <div class="confirmation-content">
+                                                                                          <i class="pi pi-exclamation-triangle mr-3"
+                                                                                                         style="font-size: 2rem" />
+                                                                                          <span v-if="user">Bạn muốn xóa những người
+                                                                                                         dùng này</span>
+                                                                           </div>
+                                                                           <template #footer>
+                                                                                          <Button label="No" icon="pi pi-times" text
+                                                                                                         @click="deleteUsersDialog = false" />
+                                                                                          <Button label="Yes" icon="pi pi-check" text
+                                                                                                         @click="deleteSelectedUsers" />
+                                                                           </template>
+                                                            </Dialog>
                                              </div>
                               </div>
                </div>
@@ -128,6 +192,11 @@ export default {
                               return {
                                              users: null,
                                              loading: true,
+                                             metaKey: true,
+                                             selectedUser: null,
+                                             selectedUsers: null,
+                                             deleteUserDialog: false,
+                                             deleteUsersDialog: false,
                                              filters: {
                                                             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
                                                             name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -190,7 +259,67 @@ export default {
                               },
                               exportCSV() {
                                              this.$refs.dt.exportCSV();
-                              }
+                              },
+                              confirmDeleteUser(user) {
+                                             this.user = user;
+                                             this.deleteUserDialog = true;
+                              },
+                              deleteUser() {
+                                             axios.delete(`http://127.0.0.1:8000/api/users/${this.user.id}`)
+                                                            .then(res => {
+                                                                           this.users = this.users.filter(val => val.id !== this.user.id);
+                                                                           this.deleteUserDialog = false;
+                                                                           this.user = null;
+                                                                           this.$toast.add({
+                                                                                          severity: 'success',
+                                                                                          summary: 'Successful',
+                                                                                          detail: 'User Deleted',
+                                                                                          life: 3000
+                                                                           });
+                                                            })
+                                                            .catch(err => {
+                                                                           console.log(err);
+                                                                           this.$toast.add({
+                                                                                          severity: 'error',
+                                                                                          summary: 'Error',
+                                                                                          detail: 'User Delete Failed',
+                                                                                          life: 3000
+                                                                           });
+                                                            });
+                              },
+                              deleteSelectedUsers() {
+                                             let users = this.selectedUsers;
+                                             this.deleteUsersDialog = false;
+                                             users.forEach(user => {
+                                                            axios.delete(`http://127.0.0.1:8000/api/users/${user.id}`)
+                                                                           .then(res => {
+                                                                                          this.users = this.users.filter(val => val.id !== user.id);
+                                                                                          this.selectedUsers = null;
+                                                                                          this.$toast.add({
+                                                                                                         severity: 'success',
+                                                                                                         summary: 'Successful',
+                                                                                                         detail: 'Users Deleted',
+                                                                                                         life: 3000
+                                                                                          });
+                                                                           })
+                                                                           .catch(err => {
+                                                                                          console.log(err);
+                                                                                          this.$toast.add({
+                                                                                                         severity: 'error',
+                                                                                                         summary: 'Error',
+                                                                                                         detail: 'Users Delete Failed',
+                                                                                                         life: 3000
+                                                                                          });
+                                                                           });
+                                             });
+                              },
+                              confirmDeleteSelected() {
+                                             this.deleteUsersDialog = true;
+                              },
+
+
+
+
 
                }
 }

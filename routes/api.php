@@ -25,4 +25,5 @@ Route::controller(AuthController::class)->group(function () {
 Route::controller(UsersController::class)->group(function () {
     Route::get('/users', 'users');
     Route::put('/users/{id}', 'update');
+    Route::delete('/users/{id}', 'delete');
 });
