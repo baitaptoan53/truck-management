@@ -30,6 +30,9 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->routes(function () {
             Route::middleware('api')
+                ->prefix('auth')
+                ->group(base_path('routes/auth.php'));
+            Route::middleware('api')
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
@@ -45,4 +48,11 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path('routes/api.php'));
     }
 
+    protected function mapAuthRoutes()
+    {
+        Route::prefix('auth')
+            ->middleware('auth')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/auth.php'));
+    }
 }

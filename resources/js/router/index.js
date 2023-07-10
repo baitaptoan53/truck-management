@@ -5,11 +5,19 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes: [
         {
-            path: '/',
             component: AppLayout,
-            name: 'dashboard',
-            component: () => import('../views/pages/home.vue'),
+            path: '/',
             children: [
+                {
+                    path: '/',
+                    name: 'dashboard',
+                    component: () => import('../views/pages/home.vue'),
+                },
+                {
+                    path: '/users',
+                    name: 'users',
+                    component: () => import('../views/pages/Users.vue'),
+                },
                 {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
@@ -66,6 +74,7 @@ const router = createRouter({
                     name: 'media',
                     component: () => import('../views/uikit/Media.vue'),
                 },
+                
             ],
         },
         {

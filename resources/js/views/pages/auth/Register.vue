@@ -3,22 +3,6 @@ import { useLayout } from '@/layout/composables/layout';
 import { ref, computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
 
-import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
-import * as yup from 'yup';
-const schema = yup.object({
-    email: yup.string()
-        .required('Email không được bỏ trống')
-        .email('Email không hợp lệ'),
-    password: yup.string()
-        .required('Mật khẩu không được bỏ trống')
-        .min(8, 'Mật khẩu phải có ít nhất 8 ký tự'),
-    phone: yup.string().required('Số điện thoại không được để trống ').matches(/^[0-9]+$/, 'Số điện thoại không hợp lệ'),
-    password_confirmation: yup.string()
-        .oneOf([yup
-            .ref('password'), null], 'Mật khẩu khác nhau')
-        .required('Xác nhận mật khẩu không được bỏ trống')
-});
-
 const { layoutConfig } = useLayout();
 const logoUrl = computed(() => {
     return `layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
@@ -36,43 +20,27 @@ const logoUrl = computed(() => {
                         <div class="text-900 text-3xl font-medium mb-3">Welcome, TRUCK NPN!</div>
                     </div>
                     <div>
-                        <VeeForm v-slot="{ submitForm }" :validation-schema="schema" as="div">
-                            <form @submit="submitForm" method="post" action="/api/users/">
-                                <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-                                <Field name="email" type="email" placeholder="Email address" class="w-full md:w-30rem mb-5"
-                                    style="padding: 1rem" />
-                                <div>
-                                    <ErrorMessage name="email" class="text-danger" />
-                                </div>
-                                <label for="phone" class="block text-900 text-xl font-medium mb-2">Số điện thoại</label>
-                                <Field name="phone" type="phone" placeholder="Số điện thoại" class="w-full md:w-30rem mb-5"
-                                    style="padding: 1rem" />
-                                <div>
-                                    <ErrorMessage name="phone" class="text-danger" />
-                                </div>
-                                <label for="password" class="block text-900 text-xl font-medium mb-2">Mật khẩu</label>
-                                <Field name="password" type="password" placeholder="Mật khẩu" class="w-full md:w-30rem mb-5"
-                                    style="padding: 1rem" />
-                                <div>
-                                    <ErrorMessage name="password" class="text-danger" />
-                                </div>
-                                <label for="password_confirmation" class="block text-900 text-xl font-medium mb-2">Mật
-                                    khẩu</label>
-                                <Field name="password_confirmation" type="password" placeholder="Mật khẩu"
-                                    class="w-full md:w-30rem mb-5" style="padding: 1rem" />
-                                <div>
-                                    <ErrorMessage name="password_confirmation" class="text-danger" />
-                                </div>
-                                <div class="flex align-items-center justify-content-between mb-5 gap-5">
-                                    <RouterLink to="/login">
-                                        <a class="font-medium no-underline ml-2 text-right cursor-pointer"
-                                            style="color: var(--primary-color)">Bạn đã có tài khoản ?</a>
-                                    </RouterLink>
-                                </div>
-                                <button class="w-full p-3 text-xl btn btn-primary">Gửi email</button>
-                            </Form>
-                        </VeeForm>
-
+                        <form @submit.prevent="register">
+                            <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
+                            <InputText v-model="email" name="email" type="email" placeholder="Email address"
+                                class="w-full md:w-30rem mb-5" style="padding: 1rem" />
+                            <label for="name" class="block text-900 text-xl font-medium mb-2">Họ và tên</label>
+                            <InputText v-model="name" name="name" type="name" placeholder="Họ và tên"
+                                class="w-full md:w-30rem mb-5" style="padding: 1rem" />
+                            <label for="phone" class="block text-900 text-xl font-medium mb-2">Số điện thoại</label>
+                            <InputText v-model="phone" name="phone" type="number" placeholder="Số điện thoại"
+                                class="w-full md:w-30rem mb-5" style="padding: 1rem" />
+                            <label for="password" class="block text-900 text-xl font-medium mb-2">Mật khẩu</label>
+                            <Password id="password1" v-model="password" placeholder="Mật khẩu" :toggleMask="true"
+                                class="w-full mb-3" inputClass="w-full" inputStyle="padding:1rem"></Password>
+                            <div class="flex align-items-center justify-content-between mb-5 gap-5">
+                                <RouterLink to="/login">
+                                    <a class="font-medium no-underline ml-2 text-right cursor-pointer"
+                                        style="color: var(--primary-color)">Bạn đã có tài khoản ?</a>
+                                </RouterLink>
+                            </div>
+                            <button label="Đăng Ký" class="w-full p-3 text-xl">Đăng Ký</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -80,7 +48,35 @@ const logoUrl = computed(() => {
     </div>
     <AppConfig simple />
 </template>
+<script>
+import axios from 'axios';
 
+export default {
+    methods: {
+        register() {
+            const formData = {
+                email: this.email,
+                password: this.password,
+                name: this.name,
+                phone: this.phone
+            };
+
+            axios.post('http://127.0.0.1:8000/api/register', formData)
+                .then(response => {
+                    // Xử lý phản hồi thành công
+                    console.log(response.data);
+                    // Chuyển hướng hoặc làm bất kỳ điều gì sau khi đăng ký thành công
+                    this.$router.push({ name: 'login' });
+                })
+                .catch(error => {
+                    // Xử lý lỗi
+                    console.log(formData);
+                    this.error = error.response.data.message;
+                });
+        }
+    }
+};
+</script>
 <style scoped>
 .pi-eye {
     transform: scale(1.6);

@@ -2,17 +2,6 @@
 import { useLayout } from '@/layout/composables/layout';
 import { ref, computed } from 'vue';
 import AppConfig from '@/layout/AppConfig.vue';
-import axios from 'axios';
-import { Form as VeeForm, Field, ErrorMessage } from 'vee-validate';
-import * as yup from 'yup';
-
-const schema = yup.object({
-  email: yup.string()
-    .required('Email không được bỏ trống')
-    .email('Email không hợp lệ'),
-  password: yup.string()
-    .required('Mật khẩu không được bỏ trống'),
-});
 const { layoutConfig } = useLayout();
 
 const logoUrl = computed(() => {
@@ -38,31 +27,23 @@ const logoUrl = computed(() => {
             <a href="#" class="social-login-link"><i class="pi pi-google"></i></a>
           </div>
           <div>
-            <VeeForm v-slot="{submitForm }" :validation-schema="schema" as="div">
-              <form @submit="submitForm" @submit.prevent="login">
-                <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
-                <Field name="email" type="email" placeholder="Địa chỉ Email" class="w-full md:w-30rem mb-5"
-                  style="padding: 1rem" v-model="email" />
-                <div>
-                  <ErrorMessage name="email" class="text-danger" />
+            <form @submit.prevent="login">
+              <label for="email1" class="block text-900 text-xl font-medium mb-2">Email</label>
+              <InputText name="email" type="email" placeholder="Địa chỉ Email" class="w-full md:w-30rem mb-5"
+                style="padding: 1rem" v-model="email" />
+              <label for="password" class="block text-900 text-xl font-medium mb-2">Mật khẩu</label>
+              <InputText name="password" type="password" placeholder="Mật khẩu" class="w-full md:w-30rem mb-5"
+                style="padding: 1rem" v-model="password" />
+              <div class="flex align-items-center justify-content-between mb-5 gap-5">
+                <div class="flex align-items-center">
+                  <input class="form-check-input me-1 mr-2" type="checkbox" id="firstCheckboxStretched">
+                  <label for="rememberme1">Nhớ mật khẩu</label>
                 </div>
-                <label for="password" class="block text-900 text-xl font-medium mb-2">Mật khẩu</label>
-                <Field name="password" type="password" placeholder="Mật khẩu" class="w-full md:w-30rem mb-5"
-                  style="padding: 1rem" v-model="password" />
-                <div>
-                  <ErrorMessage name="password" class="text-danger" />
-                </div>
-                <div class="flex align-items-center justify-content-between mb-5 gap-5">
-                  <div class="flex align-items-center">
-                    <input class="form-check-input me-1 mr-2" type="checkbox" id="firstCheckboxStretched">
-                    <label for="rememberme1">Nhớ mật khẩu</label>
-                  </div>
-                  <RouterLink to="/forgotpassword"><a class="font-medium no-underline ml-2 text-right cursor-pointer"
-                      style="color: var(--primary-color)">Bạn quên mật khẩu ?</a></RouterLink>
-                </div>
-                <button class="w-full p-3 text-xl btn btn-primary">Đăng nhập</button>
-              </Form>
-            </VeeForm>
+                <RouterLink to="/forgotpassword"><a class="font-medium no-underline ml-2 text-right cursor-pointer"
+                    style="color: var(--primary-color)">Bạn quên mật khẩu ?</a></RouterLink>
+              </div>
+              <button class="w-full p-3 text-xl btn btn-primary">Đăng nhập</button>
+            </Form>
           </div>
         </div>
       </div>
@@ -77,22 +58,20 @@ export default {
   // Các phần khác của component
   methods: {
     login() {
-
-      axios.post('http://127.0.0.1:8000/api/login', {
-        email: 'baitaptoan53@gmail.com',
-        password: '1234567891'
-      })
+      const formData = {
+        email: this.email,
+        password: this.password,
+      };
+      axios.post('http://127.0.0.1:8000/api/login', formData)
         .then(response => {
           // Xử lý phản hồi thành công
           const { user, authorization } = response.data;
           // Lưu token vào localStorage hoặc Vuex
           localStorage.setItem('token', authorization.token);
-          // Tiến hành đăng nhập
-          // Chuyển hướng hoặc làm bất kỳ điều gì sau khi đăng nhập thành công
+          localStorage.setItem('user', JSON.stringify(user));
+          this.$router.push({ name: 'dashboard' });
         })
         .catch(error => {
-          // Xử lý lỗi
-          console.log(error.response.data.message);
           this.error = error.response.data.message;
         });
     }

@@ -33,9 +33,15 @@ import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Toast from 'primevue/toast'
 import StyleClass from 'primevue/styleclass'
-
+import Dropdown from 'primevue/dropdown'
+import RadioButton from 'primevue/radiobutton'
 import CodeHighlight from '@/components/CodeHighlight.vue'
 import BlockViewer from '@/components/BlockViewer.vue'
+import InputNumber from 'primevue/inputnumber'
+import Dialog from 'primevue/dialog'
+import Toolbar from 'primevue/toolbar'
+import FileUpload from 'primevue/fileupload'
+
 
 import '@/assets/styles.scss'
 
@@ -65,6 +71,12 @@ app.component('InputText', InputText)
 app.component('Password', Password)
 app.component('Checkbox', Checkbox)
 app.component('Toast', Toast)
+app.component('Dropdown', Dropdown)
+app.component('RadioButton', RadioButton)
+app.component('InputNumber', InputNumber)
+app.component('Dialog', Dialog)
+app.component('Toolbar', Toolbar)
+app.component('FileUpload', FileUpload)
 
 app.use(router)
 
