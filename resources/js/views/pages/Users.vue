@@ -19,14 +19,13 @@ import { useToast } from 'primevue/usetoast';
                                                                            v-model:selection="selectedUsers" dataKey="id">
                                                                            <template #header>
                                                                                           <div class="flex justify-content-end">
-                                                                                                         <div style="text-align: left"
+                                                                                                         <!-- <div style="text-align: left"
                                                                                                                         class="mr-2">
                                                                                                                         <Button icon="pi pi-plus"
                                                                                                                                        label="Thêm mới"
-                                                                                                                                       @click="onAddNewUser"
+                                                                                                                                       @click="openNew"
                                                                                                                                        severity="success" />
-                                                                                                         </div>
-                                                                                                         <!-- delete -->
+                                                                                                         </div> -->
                                                                                                          <div style="text-align: left"
                                                                                                                         class="mr-2">
                                                                                                                         <Button icon="pi pi-trash"
@@ -148,6 +147,71 @@ import { useToast } from 'primevue/usetoast';
                                                                            </Column>
 
                                                             </DataTable>
+                                                            <Dialog v-model:visible="userDialog" :style="{ width: '450px' }"
+                                                                           header="Chỉnh sủa tên người dùng" :modal="true"
+                                                                           class="p-fluid">
+                                                                           <div class="field">
+                                                                                          <label for="name">Tên người dùng</label>
+                                                                                          <InputText id="name" v-model.trim="user.name"
+                                                                                                         required="true" autofocus
+                                                                                                         :class="{ 'p-invalid': submitted && !user.name }" />
+                                                                                          <small class="p-error"
+                                                                                                         v-if="submitted && !user.name">Phải
+                                                                                                         điền tên</small>
+                                                                           </div>
+                                                                           <div class="field">
+                                                                                          <label for="phone">Số điện thoại</label>
+                                                                                          <InputText id="phone"
+                                                                                                         v-model.trim="user.phone"
+                                                                                                         required="true"
+                                                                                                         :class="{ 'p-invalid': submitted && !user.phone }" />
+                                                                                          <small class="p-error"
+                                                                                                         v-if="submitted && !user.phone">Phải
+                                                                                                         điền số điện thoại</small>
+                                                                           </div>
+                                                                           <div class="field">
+                                                                                          <label for="email">Email</label>
+                                                                                          <InputText id="email"
+                                                                                                         v-model.trim="user.email"
+                                                                                                         required="true"
+                                                                                                         :class="{ 'p-invalid': submitted && !user.email }" />
+                                                                                          <small class="p-error"
+                                                                                                         v-if="submitted && !user.email">Phải
+                                                                                                         điền Email</small>
+                                                                           </div>
+                                                                           <div class="field">
+                                                                                          <label for="status" class="mb-3">Trạng
+                                                                                                         thái</label>
+                                                                                          <Dropdown id="status" v-model="user.status"
+                                                                                                         :options="statuses"
+                                                                                                         optionLabel="label"
+                                                                                                         placeholder="Chọn trạng thái">
+                                                                                                         <template #value="slotProps">
+                                                                                                                        <div
+                                                                                                                                       v-if="slotProps.value && slotProps.value.value">
+                                                                                                                                       <Tag :value="slotProps.value.value"
+                                                                                                                                                      :severity="getSeverity(slotProps.value.label)" />
+                                                                                                                        </div>
+                                                                                                                        <div
+                                                                                                                                       v-else-if="slotProps.value && !slotProps.value.value">
+                                                                                                                                       <Tag :value="slotProps.value"
+                                                                                                                                                      :severity="getSeverity(slotProps.value)" />
+                                                                                                                        </div>
+                                                                                                                        <span v-else>
+                                                                                                                                       {{
+                                                                                                                                                      slotProps.placeholder
+                                                                                                                                       }}
+                                                                                                                        </span>
+                                                                                                         </template>
+                                                                                          </Dropdown>
+                                                                           </div>
+                                                                           <template #footer>
+                                                                                          <Button label="Cancel" icon="pi pi-times"
+                                                                                                         text @click="hideDialog" />
+                                                                                          <Button label="Save" icon="pi pi-check" text
+                                                                                                         @click="saveUser" />
+                                                                           </template>
+                                                            </Dialog>
 
                                                             <Dialog v-model:visible="deleteUserDialog" :style="{ width: '450px' }"
                                                                            header="Confirm" :modal="true">
@@ -197,6 +261,8 @@ export default {
                                              selectedUsers: null,
                                              deleteUserDialog: false,
                                              deleteUsersDialog: false,
+                                             submitted: false,
+                                             userDialog: false,
                                              filters: {
                                                             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
                                                             name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -316,10 +382,69 @@ export default {
                               confirmDeleteSelected() {
                                              this.deleteUsersDialog = true;
                               },
+                              hideDialog() {
+                                             this.userDialog = false;
+                                             this.submitted = false;
+                              },
+                              saveUser() {
+                                             this.submitted = true;
+                                             if (this.user.name.trim()) {
+                                                            if (this.user.id) {
+                                                                           axios.put(`http://127.0.0.1:8000/api/users/${this.user.id}`, this.user)
+                                                                                          .then(res => {
+                                                                                                         // reload lại trang
+                                                                                                         location.reload();
+                                                                                                         this.$toast.add({
+                                                                                                                        severity: 'success',
+                                                                                                                        summary: 'Successful',
+                                                                                                                        detail: 'User Updated',
+                                                                                                                        life: 3000
+                                                                                                         });
+                                                                                          })
+                                                                                          .catch(err => {
+                                                                                                         console.log(err);
+                                                                                                         this.$toast.add({
+                                                                                                                        severity: 'error',
+                                                                                                                        summary: 'Error',
+                                                                                                                        detail: 'User Update Failed',
+                                                                                                                        life: 3000
+                                                                                                         });
+                                                                                          });
 
-
-
-
+                                                            }
+                                                            // else {
+                                                            //                axios.post('http://127.0.0.1:8000/api/users', this.user)
+                                                            //                               .then(res => {
+                                                            //                                              this.$toast.add({
+                                                            //                                                             severity: 'success',
+                                                            //                                                             summary: 'Successful',
+                                                            //                                                             detail: 'User Created',
+                                                            //                                                             life: 3000
+                                                            //                                              });
+                                                            //                               })
+                                                            //                               .catch(err => {
+                                                            //                                              console.log(err);
+                                                            //                                              this.$toast.add({
+                                                            //                                                             severity: 'error',
+                                                            //                                                             summary: 'Error',
+                                                            //                                                             detail: 'User Creation Failed',
+                                                            //                                                             life: 3000
+                                                            //                                              });
+                                                            //                               });
+                                                            // }
+                                                            this.user = null;
+                                                            this.userDialog = false;
+                                             }
+                              },
+                              editUser(user) {
+                                             this.user = { ...user };
+                                             this.userDialog = true;
+                              },
+                              // openNew() {
+                              //                this.user = {};
+                              //                this.submitted = false;
+                              //                this.userDialog = true;
+                              // },
 
                }
 }
