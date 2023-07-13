@@ -10,7 +10,15 @@ const model = ref([
     },
     {
         label: 'Quản lý',
-        items: [{ label: 'Người dùng', icon: 'pi pi-users', to: '/users' }]
+        items: [{ label: 'Người dùng', icon: 'pi pi-users', to: '/users' },
+        { label: 'Xe', icon: 'pi pi-car', to: '/cars' },
+        { label: 'Hóa đơn', icon: 'pi pi-file', to: '/bills' },
+        { label: 'Chuyến xe', icon: 'pi pi-car', to: '/trips' },
+            { label: 'Trạng thái', icon: 'pi pi-briefcase', to: '/status' },
+        {label: 'Bảo trì', icon: 'pi pi-briefcase', to: '/maintenance'},
+
+
+        ]
     },
     {
         label: 'UI Components',

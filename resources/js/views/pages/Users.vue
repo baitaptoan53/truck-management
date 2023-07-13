@@ -1,10 +1,5 @@
 <script setup>
 import { FilterMatchMode } from 'primevue/api';
-import { ref, onMounted, onBeforeMount } from 'vue';
-import { useToast } from 'primevue/usetoast';
-
-
-
 </script>
 <template>
                <div class="grid">
@@ -34,13 +29,10 @@ import { useToast } from 'primevue/usetoast';
                                                                                                                                        :disabled="!selectedUsers || !selectedUsers.length"
                                                                                                                                        class="p-button-danger" />
                                                                                                          </div>
-
-
-
                                                                                                          <div style="text-align: left"
                                                                                                                         class="mr-2">
                                                                                                                         <Button icon="pi pi-external-link"
-                                                                                                                                       label="Export"
+                                                                                                                                       label="Tải tệp CSV"
                                                                                                                                        @click="exportCSV($event)" />
                                                                                                          </div>
                                                                                                          <span
@@ -68,10 +60,6 @@ import { useToast } from 'primevue/usetoast';
                                                                                                                         @input="filterCallback()"
                                                                                                                         class="p-column-filter"
                                                                                                                         placeholder="Tìm theo tên" />
-                                                                                          </template>
-                                                                                          <template #editor="{ data, field }">
-                                                                                                         <InputText
-                                                                                                                        v-model="data[field]" />
                                                                                           </template>
                                                                            </Column>
                                                                            <Column field="email" header="Email" sortable>
@@ -206,9 +194,9 @@ import { useToast } from 'primevue/usetoast';
                                                                                           </Dropdown>
                                                                            </div>
                                                                            <template #footer>
-                                                                                          <Button label="Cancel" icon="pi pi-times"
-                                                                                                         text @click="hideDialog" />
-                                                                                          <Button label="Save" icon="pi pi-check" text
+                                                                                          <Button label="Hủy" icon="pi pi-times" text
+                                                                                                         @click="hideDialog" />
+                                                                                          <Button label="Lưu" icon="pi pi-check" text
                                                                                                          @click="saveUser" />
                                                                            </template>
                                                             </Dialog>
@@ -222,9 +210,9 @@ import { useToast } from 'primevue/usetoast';
                                                                                                          <b>{{ user.name }}</b>?</span>
                                                                            </div>
                                                                            <template #footer>
-                                                                                          <Button label="No" icon="pi pi-times" text
+                                                                                          <Button label="Hủy" icon="pi pi-times" text
                                                                                                          @click="deleteUserDialog = false" />
-                                                                                          <Button label="Yes" icon="pi pi-check" text
+                                                                                          <Button label="Xóa" icon="pi pi-check" text
                                                                                                          @click="deleteUser" />
                                                                            </template>
                                                             </Dialog>
@@ -233,13 +221,13 @@ import { useToast } from 'primevue/usetoast';
                                                                            <div class="confirmation-content">
                                                                                           <i class="pi pi-exclamation-triangle mr-3"
                                                                                                          style="font-size: 2rem" />
-                                                                                          <span v-if="user">Bạn muốn xóa những người
+                                                                                          <span>Bạn muốn xóa những người
                                                                                                          dùng này</span>
                                                                            </div>
                                                                            <template #footer>
-                                                                                          <Button label="No" icon="pi pi-times" text
+                                                                                          <Button label="Hủy" icon="pi pi-times" text
                                                                                                          @click="deleteUsersDialog = false" />
-                                                                                          <Button label="Yes" icon="pi pi-check" text
+                                                                                          <Button label="Xóa" icon="pi pi-check" text
                                                                                                          @click="deleteSelectedUsers" />
                                                                            </template>
                                                             </Dialog>

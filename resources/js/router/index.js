@@ -19,6 +19,32 @@ const router = createRouter({
                     component: () => import('../views/pages/Users.vue'),
                 },
                 {
+                    path: '/cars',
+                    name: 'car',
+                    component: () => import('../views/pages/Car.vue'),
+                },
+                {
+                    path: '/bills',
+                    name: 'bills',
+                    component: () => import('../views/pages/Bills.vue'),
+                },
+                {
+                    path: '/trips',
+                    name: 'trips',
+                    component: () => import('../views/pages/Trips.vue'),
+                },
+                {
+                    path: '/maintenance',
+                    name: 'maintenance',
+                    component: () => import('../views/pages/Maintenance.vue'),
+                },
+
+                {
+                    path: '/status',
+                    name: 'status',
+                    component: () => import('../views/pages/Status.vue'),
+                },
+                {
                     path: '/uikit/formlayout',
                     name: 'formlayout',
                     component: () => import('../views/uikit/FormLayout.vue'),
@@ -74,7 +100,6 @@ const router = createRouter({
                     name: 'media',
                     component: () => import('../views/uikit/Media.vue'),
                 },
-                
             ],
         },
         {
