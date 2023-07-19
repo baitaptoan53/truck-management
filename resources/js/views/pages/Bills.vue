@@ -1,4 +1,5 @@
 <template>
+               <Toast />
                <div class="p-grid">
                               <div class="p-col-12">
                                              <div class="card">
@@ -10,8 +11,7 @@
                                                                            :rowsPerPageOptions="[5, 10, 20, 50]" :loading="loading"
                                                                            v-model:filters="filters" dataKey="id">
                                                                            <template #empty> No customers found. </template>
-                                                                           <template #loading> Loading customers data. Please
-                                                                                          wait.</template>
+                                                                           <template #loading> <ProgressSpinner /> Đang tải dữ liệu...</template>
                                                                            <Column field="id" header="Mã hóa đơn" sortable></Column>
                                                                            <Column field="trip_id" header="Trip ID" sortable></Column>
                                                                            <Column field="invoice_date" header="Ngày tạo" sortable>
@@ -27,13 +27,18 @@
                                                                                                          </Badge>
                                                                                           </template>
                                                                            </Column>
-                                                                           <Column field="action" :body-style="{ 'width': '8em' }">
-                                                                                          <template #body="{ slotProps }">
-                                                                                                         <Button icon="pi pi-pencil"
+                                                                           <Column :exportable="false" style="min-width:9rem">
+                                                                                          <template #body="slotProps">
+                                                                                                         <Button icon="pi pi-eye"
                                                                                                                         outlined
                                                                                                                         rounded
                                                                                                                         class="mr-2"
-                                                                                                                        @click="viewInvoice(slotProps.data)" />
+                                                                                                                        @click="showInvoice(slotProps.data)" />
+                                                                                                         <!-- <Button icon="pi pi-trash"
+                                                                                                                        outlined
+                                                                                                                        rounded
+                                                                                                                        severity="danger"
+                                                                                                                        @click="confirmDeleteUser(slotProps.data)" /> -->
                                                                                           </template>
                                                                            </Column>
                                                             </DataTable>
@@ -90,7 +95,9 @@
                                                                                                                                                                                                    </div>
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-value">
-                                                                                                                                                                                                                  30/08/2019
+                                                                                                                                                                                                                  {{
+                                                                                                                                                                                                                                 invoice.invoice_date
+                                                                                                                                                                                                                  }}
                                                                                                                                                                                                    </div>
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-label">
@@ -99,12 +106,15 @@
                                                                                                                                                                                                    </div>
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-value">
-                                                                                                                                                                                                                  8523
+                                                                                                                                                                                                                  #{{
+                                                                                                                                                                                                                                 invoice.id
+                                                                                                                                                                                                                  }}
                                                                                                                                                                                                    </div>
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-label">
-                                                                                                                                                                                                                  CUSTOMER
-                                                                                                                                                                                                                  ID
+                                                                                                                                                                                                                  MÃ
+                                                                                                                                                                                                                  TÀI
+                                                                                                                                                                                                                  XẾ
                                                                                                                                                                                                    </div>
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-value">
@@ -117,8 +127,8 @@
                                                                                                                                                                      class="invoice-to">
                                                                                                                                                                      <div
                                                                                                                                                                                     class="bill-to">
-                                                                                                                                                                                    BILL
-                                                                                                                                                                                    TO
+                                                                                                                                                                                    GỬI
+                                                                                                                                                                                    ĐẾN
                                                                                                                                                                      </div>
                                                                                                                                                                      <div
                                                                                                                                                                                     class="invoice-to-info">
@@ -137,45 +147,39 @@
                                                                                                                                                                      <table>
                                                                                                                                                                                     <thead>
                                                                                                                                                                                                    <tr>
-                                                                                                                                                                                                                  <th>Description
+                                                                                                                                                                                                                  <th>Tên chuyến xe
                                                                                                                                                                                                                   </th>
-                                                                                                                                                                                                                  <th>Quantity
+                                                                                                                                                                                                                  <th>Số KM
                                                                                                                                                                                                                   </th>
-                                                                                                                                                                                                                  <th>Unit Price
+                                                                                                                                                                                                                  <th>Ngày đi - Ngày
+                                                                                                                                                                                                                                 đến
                                                                                                                                                                                                                   </th>
-                                                                                                                                                                                                                  <th>Line Total
+                                                                                                                                                                                                                  <th>Thành tiền
                                                                                                                                                                                                                   </th>
                                                                                                                                                                                                    </tr>
                                                                                                                                                                                     </thead>
                                                                                                                                                                                     <tbody>
                                                                                                                                                                                                    <tr>
-                                                                                                                                                                                                                  <td>Green T-Shirt
+                                                                                                                                                                                                                  <td>{{ invoice.start_location
+                                                                                                                                                                                                                  }}
+                                                                                                                                                                                                                                 -
+                                                                                                                                                                                                                                 {{
+                                                                                                                                                                                                                                                invoice.end_location
+                                                                                                                                                                                                                                 }}
                                                                                                                                                                                                                   </td>
-                                                                                                                                                                                                                  <td>1
+                                                                                                                                                                                                                  <td>{{ invoice.total_distance
+                                                                                                                                                                                                                  }}
                                                                                                                                                                                                                   </td>
-                                                                                                                                                                                                                  <td>$49.00
+                                                                                                                                                                                                                  <td>{{ invoice.start_date
+                                                                                                                                                                                                                  }}
+                                                                                                                                                                                                                                 -
+                                                                                                                                                                                                                                 {{
+                                                                                                                                                                                                                                                invoice.end_date
+                                                                                                                                                                                                                                 }}
                                                                                                                                                                                                                   </td>
-                                                                                                                                                                                                                  <td>$49.00
-                                                                                                                                                                                                                  </td>
-                                                                                                                                                                                                   </tr>
-                                                                                                                                                                                                   <tr>
-                                                                                                                                                                                                                  <td>Game Controller
-                                                                                                                                                                                                                  </td>
-                                                                                                                                                                                                                  <td>2
-                                                                                                                                                                                                                  </td>
-                                                                                                                                                                                                                  <td>$99.00
-                                                                                                                                                                                                                  </td>
-                                                                                                                                                                                                                  <td>$198.00
-                                                                                                                                                                                                                  </td>
-                                                                                                                                                                                                   </tr>
-                                                                                                                                                                                                   <tr>
-                                                                                                                                                                                                                  <td>Mini Speakers
-                                                                                                                                                                                                                  </td>
-                                                                                                                                                                                                                  <td>1
-                                                                                                                                                                                                                  </td>
-                                                                                                                                                                                                                  <td>$85.00
-                                                                                                                                                                                                                  </td>
-                                                                                                                                                                                                                  <td>$85.00
+                                                                                                                                                                                                                  <td>{{ invoice.total_amount
+                                                                                                                                                                                                                  }}
+                                                                                                                                                                                                                                 VND
                                                                                                                                                                                                                   </td>
                                                                                                                                                                                                    </tr>
                                                                                                                                                                                     </tbody>
@@ -185,7 +189,8 @@
                                                                                                                                                                      class="invoice-summary">
                                                                                                                                                                      <div
                                                                                                                                                                                     class="invoice-notes">
-                                                                                                                                                                                    <b>NOTES</b>
+                                                                                                                                                                                    <b>Ghi
+                                                                                                                                                                                                   chú</b>
                                                                                                                                                                                     <div>
                                                                                                                                                                                     </div>
                                                                                                                                                                      </div>
@@ -194,27 +199,30 @@
                                                                                                                                                                                                    class="invoice-details">
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-label">
-                                                                                                                                                                                                                  SUBTOTAL
+                                                                                                                                                                                                                  CỘNG
                                                                                                                                                                                                    </div>
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-value">
-                                                                                                                                                                                                                  $332.00
+                                                                                                                                                                                                                  {{
+                                                                                                                                                                                                                                 invoice.total_amount
+                                                                                                                                                                                                                  }}
                                                                                                                                                                                                    </div>
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-label">
-                                                                                                                                                                                                                  VAT
+                                                                                                                                                                                                                  VAT 10%
                                                                                                                                                                                                    </div>
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-value">
-                                                                                                                                                                                                                  0
+                                                                                                                                                                                                                  {{invoice.total_amount*0.1}}
+
                                                                                                                                                                                                    </div>
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-label">
-                                                                                                                                                                                                                  TOTAL
+                                                                                                                                                                                                                  TỔNG TIỀN
                                                                                                                                                                                                    </div>
                                                                                                                                                                                                    <div
                                                                                                                                                                                                                   class="invoice-value">
-                                                                                                                                                                                                                  $332.00
+                                                                                                                                                                                                                  {{invoice.total_amount*1.1}}
                                                                                                                                                                                                    </div>
                                                                                                                                                                                     </div>
                                                                                                                                                                      </div>
@@ -240,7 +248,7 @@ export default {
                                              invoices: null,
                                              loading: true,
                                              columns: null,
-                                             invoiceDialog: true,
+                                             invoiceDialog: false,
                                              statuses: [
                                                             { label: 'Đã thanh toán', value: 'paid' },
                                                             { label: 'Chưa thanh toán', value: 'unpaid' },
@@ -271,7 +279,7 @@ export default {
                                                                            return null;
                                              }
                               },
-                              print(el) {
+                              print() {
                                              var card = document.getElementById("invoice-content");
                                              var htmlContent = '';
                                              var style = document.getElementsByTagName("style");
@@ -286,6 +294,13 @@ export default {
                                              printWin.document.write(htmlContent);
                                              printWin.focus();
                                              printWin.print();
+                              },
+                              hideDialog() {
+                                             this.invoiceDialog = false;
+                              },
+                              showInvoice(invoice) {
+                                             this.invoice = { ...invoice };
+                                             this.invoiceDialog = true;
                               },
 
 
@@ -429,5 +444,4 @@ export default {
                               background: #ffffff;
                               color: #424242;
                }
-}
-</style>
+}</style>

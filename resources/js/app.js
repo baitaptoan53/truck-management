@@ -41,12 +41,15 @@ import InputNumber from 'primevue/inputnumber'
 import Dialog from 'primevue/dialog'
 import Toolbar from 'primevue/toolbar'
 import FileUpload from 'primevue/fileupload'
-
+import ProgressSpinner from 'primevue/progressspinner'
+import ToastService from 'primevue/toastservice'
 
 import '@/assets/styles.scss'
 
 const app = createApp(App)
 app.use(PrimeVue, { ripple: true })
+app.use(ToastService)
+
 app.component('CodeHighlight', CodeHighlight)
 app.component('BlockViewer', BlockViewer)
 app.directive('styleclass', StyleClass)
@@ -77,6 +80,7 @@ app.component('InputNumber', InputNumber)
 app.component('Dialog', Dialog)
 app.component('Toolbar', Toolbar)
 app.component('FileUpload', FileUpload)
+app.component('ProgressSpinner', ProgressSpinner)
 
 app.use(router)
 

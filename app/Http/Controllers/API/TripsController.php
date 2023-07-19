@@ -17,4 +17,11 @@ class TripsController extends Controller
     
         return response()->json($trips);
     }
+    public function update(Request $request, $id)
+    {
+        $trip = Trip::find($id);
+        $trip->update($request->all());
+        dd($trip);
+        return response()->json($trip);
+    }
 }

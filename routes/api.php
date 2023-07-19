@@ -44,6 +44,6 @@ Route::controller(TruckController::class)->group(function () {
 });
 Route::controller(TripsController::class)->group(function () {
     Route::get('/trips', 'index');
-
+    Route::put('/trips/{id}', 'update');
     
 });

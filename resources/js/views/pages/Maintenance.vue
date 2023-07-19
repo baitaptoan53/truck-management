@@ -1,5 +1,5 @@
 <template>
                <div>
-               <h1>Maintenance</h1>
+               <h1>Bảo trì</h1>
                </div>
 </template>

@@ -1,8 +1,8 @@
 <template>
+               <Toast />
                <div class="p-grid">
                               <div class="p-col-12">
                                              <div class="card">
-                                                            <h1>Car</h1>
                                                             <DataTable :value="trucks" tableStyle="min-width: 50rem"
                                                                            :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
                                                                            removableSort paginator :rows="5" filterDisplay="row"
@@ -43,7 +43,9 @@
                                                                                           </div>
                                                                            </template>
                                                                            <template #empty> Không có xe nào </template>
-                                                                           <template #loading> Đang tải dữ liệu xe...</template>
+                                                                           <template #loading>
+                                                                                          <ProgressSpinner /> Đang tải dữ liệu xe...
+                                                                           </template>
                                                                            <Column selectionMode="multiple" headerStyle="width: 3rem">
                                                                            </Column>
                                                                            <Column field="manufacturer" header="Hãng xe" sortable>
@@ -179,7 +181,8 @@
                                                                            </div>
                                                                            <div class="p-field">
                                                                                           <label for="year">Năm sản xuất</label>
-                                                                                          <Calendar dateFormat="yy" view="year" id="year" v-model="truck.year"
+                                                                                          <Calendar dateFormat="yy" view="year"
+                                                                                                         id="year" v-model="truck.year"
                                                                                                          :class="{ 'p-invalid': submitted && !truck.year }"
                                                                                                          required />
                                                                                           <div v-if="submitted && !truck.year"
@@ -212,7 +215,7 @@
                                                                            <div class="p-field">
                                                                                           <label for="registration_date">Ngày mua
                                                                                                          xe</label>
-                                                                                          <Calendar  id="registration_date"
+                                                                                          <Calendar id="registration_date"
                                                                                                          v-model="truck.registration_date"
                                                                                                          :class="{ 'p-invalid': submitted && !truck.registration_date }"
                                                                                                          required showIcon />
@@ -223,7 +226,7 @@
                                                                            <div class="p-field">
                                                                                           <label for="registration_date">Ngày đăng
                                                                                                          ký</label>
-                                                                                          <Calendar  id="registration_date"
+                                                                                          <Calendar id="registration_date"
                                                                                                          v-model="truck.registration_date"
                                                                                                          :class="{ 'p-invalid': submitted && !truck.registration_date }"
                                                                                                          required showIcon />
@@ -299,7 +302,12 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { FilterMatchMode } from 'primevue/api';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 export default {
+               setup() {
+                              const toast = useToast();
+               },
                data() {
                               return {
                                              trucks: null,

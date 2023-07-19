@@ -44,8 +44,7 @@
                                                                                           </div>
                                                                            </template>
                                                                            <template #empty> No customers found. </template>
-                                                                           <template #loading> Loading customers data. Please
-                                                                                          wait.</template>
+                                                                           <template #loading> <ProgressSpinner /> Đang tải dữ liệu</template>
                                                                            <column field="start_date" header="Ngày đi" sortable>
                                                                                           <template #body="{ data }">
                                                                                                          {{ data.start_date }}
@@ -53,7 +52,7 @@
                                                                                           <template
                                                                                                          #filter="{ filterModel, filterCallback }">
                                                                                                          <InputText v-model="filterModel.value"
-                                                                                                                        type="text"
+                                                                                                                        type="date"
                                                                                                                         @input="filterCallback()"
                                                                                                                         class="p-column-filter"
                                                                                                                         placeholder="Tìm theo ngày bắt đầu" />
@@ -66,7 +65,7 @@
                                                                                           <template
                                                                                                          #filter="{ filterModel, filterCallback }">
                                                                                                          <InputText v-model="filterModel.value"
-                                                                                                                        type="text"
+                                                                                                                        type="date"
                                                                                                                         @input="filterCallback()"
                                                                                                                         class="p-column-filter"
                                                                                                                         placeholder="Tìm theo ngày kết thúc" />
@@ -125,9 +124,77 @@
                                                                                                                         placeholder="Tìm theo khoảng cách" />
                                                                                           </template>
                                                                            </column>
+                                                                           <Column :exportable="false" style="min-width:9rem">
+                                                                                          <template #body="slotProps">
+                                                                                                         <Button icon="pi pi-pencil"
+                                                                                                                        outlined
+                                                                                                                        rounded
+                                                                                                                        class="mr-2"
+                                                                                                                        @click="editTrip(slotProps.data)" />
+                                                                                          </template>
+                                                                           </Column>
 
                                                             </DataTable>
-                                                            
+                                                            <Dialog v-model:visible="tripDialog" :style="{ width: '80%' }"
+                                                                           :modal="true" class="p-fluid">
+                                                                           <div class="field">
+                                                                                          <label class="label">Ngày đi</label>
+                                                                                          <div class="control">
+                                                                                                         <InputText v-model.trim="trip.start_date"
+                                                                                                                        type="date" />
+                                                                                          </div>
+                                                                                          <small class="p-error"
+                                                                                                         v-if="submitted && !trip.start_date">Phải
+                                                                                                         điền ngày đi</small>
+                                                                           </div>
+                                                                           <div class="field">
+                                                                                          <label class="label">Ngày đến</label>
+                                                                                          <div class="control">
+                                                                                                         <InputText v-model.trim="trip.end_date"
+                                                                                                                        type="date" />
+                                                                                          </div>
+                                                                                          <small class="p-error"
+                                                                                                         v-if="submitted && !trip.end_date">Phải
+                                                                                                         điền ngày đến</small>
+                                                                           </div>
+                                                                           <div class="field">
+                                                                                          <label class="label">Điểm đi</label>
+                                                                                          <div class="control">
+                                                                                                         <InputText v-model.trim="trip.start_location"
+                                                                                                                        type="text" />
+                                                                                          </div>
+                                                                                          <small class="p-error"
+                                                                                                         v-if="submitted && !trip.start_location">Phải
+                                                                                                         điền điểm đi</small>
+                                                                           </div>
+                                                                           <div class="field">
+                                                                                          <label class="label">Điểm đến</label>
+                                                                                          <div class="control">
+                                                                                                         <InputText v-model.trim="trip.end_location"
+                                                                                                                        type="text" />
+                                                                                          </div>
+                                                                                          <small class="p-error"
+                                                                                                         v-if="submitted && !trip.end_location">Phải
+                                                                                                         điền điểm đến</small>
+                                                                           </div>
+                                                                           <div class="field">
+                                                                                          <label class="label">Khoảng cách</label>
+                                                                                          <div class="control">
+                                                                                                         <InputText v-model.trim="trip.total_distance"
+                                                                                                                        type="text" />
+                                                                                          </div>
+                                                                                          <small class="p-error"
+                                                                                                         v-if="submitted && !trip.total_distance">Phải
+                                                                                                         điền khoảng cách</small>
+                                                                           </div>
+                                                                           <template #footer>
+                                                                                          <Button label="Hủy" icon="pi pi-times" text
+                                                                                                         @click="hideDialog" />
+                                                                                          <Button label="Lưu" icon="pi pi-check"
+                                                                                                         class="p-button-success" text
+                                                                                                         @click="saveTrip" />
+                                                                           </template>
+                                                            </Dialog>
                                              </div>
                               </div>
                </div>
@@ -142,7 +209,7 @@ export default {
                                              trips: null,
                                              loading: true,
                                              columns: null,
-                                             tripDialog: true,
+                                             tripDialog: false,
                                              submitted: false,
                                              filters: {
                                                             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -164,6 +231,44 @@ export default {
                                              .catch(err => {
                                                             console.log(err);
                                              });
+               },
+               methods: {
+                              editTrip(trip) {
+                                             this.trip = { ...trip };
+                                             this.tripDialog = true;
+                              },
+                              hideDialog() {
+                                             this.tripDialog = false;
+                                             this.submitted = false;
+                              },
+                              saveTrip() {
+                                             this.submitted = true;
+                                             if (this.trip.start_date && this.trip.end_date && this.trip.start_location && this.trip.end_location && this.trip.total_distance) {
+                                                            if (this.trip.id) {
+                                                                           axios.put("http://127.0.0.1:8000/api/trips/" + this.trip.id, this.trip)
+                                                                                          .then(res => {
+                                                                                                         const index = this.trips.findIndex(trip => trip.id === this.trip.id);
+                                                                                                         this.trips[index] = this.trip;
+                                                                                                         this.$toast.add({
+                                                                                                                        severity: "success",
+                                                                                                                        summary: "Thành công",
+                                                                                                                        detail: "Chuyến đi đã được cập nhật",
+                                                                                                                        life: 3000
+                                                                                                         });
+                                                                                                         this.tripDialog = false;
+                                                                                                         this.trip = {};
+                                                                                          })
+                                                                                          .catch(err => {
+                                                                                                         console.log(err);
+                                                                                          });
+
+                                                            }
+
+                                             }
+                                             this.trip = null;
+                                             this.tripDialog = false;
+                              }
+
                },
 }
 </script>

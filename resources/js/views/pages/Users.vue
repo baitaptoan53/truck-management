@@ -2,6 +2,7 @@
 import { FilterMatchMode } from 'primevue/api';
 </script>
 <template>
+               <Toast />
                <div class="grid">
                               <div class="col-12">
                                              <div class="card">
@@ -45,8 +46,10 @@ import { FilterMatchMode } from 'primevue/api';
                                                                                           </div>
                                                                            </template>
                                                                            <template #empty> No customers found. </template>
-                                                                           <template #loading> Loading customers data. Please
-                                                                                          wait.</template>
+                                                                           <template #loading>
+                                                                                          <ProgressSpinner />Đang tải dữ liệu người
+                                                                                          dùng...
+                                                                           </template>
                                                                            <Column selectionMode="multiple" headerStyle="width: 3rem">
                                                                            </Column>
                                                                            <Column field="name" header="Name" sortable>
@@ -238,8 +241,13 @@ import { FilterMatchMode } from 'primevue/api';
 <script>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 
 export default {
+               setup() {
+                              const toast = useToast();
+               },
                data() {
                               return {
                                              users: null,
@@ -293,11 +301,12 @@ export default {
                               onRowEditSave(e) {
                                              const data = e.data;
                                              axios.put(`http://127.0.0.1:8000/api/users/${data.id}`, data)
+                                                            // thông báo ra toast 
                                                             .then(res => {
                                                                            this.$toast.add({
                                                                                           severity: 'success',
-                                                                                          summary: 'Successful',
-                                                                                          detail: 'User Updated',
+                                                                                          summary: 'Xong',
+                                                                                          detail: 'Cập nhật thành công',
                                                                                           life: 3000
                                                                            });
                                                             })
@@ -305,8 +314,8 @@ export default {
                                                                            console.log(err);
                                                                            this.$toast.add({
                                                                                           severity: 'error',
-                                                                                          summary: 'Error',
-                                                                                          detail: 'User Update Failed',
+                                                                                          summary: 'Lỗi',
+                                                                                          detail: 'Cập nhật thất bại',
                                                                                           life: 3000
                                                                            });
                                                             });
@@ -326,8 +335,8 @@ export default {
                                                                            this.user = null;
                                                                            this.$toast.add({
                                                                                           severity: 'success',
-                                                                                          summary: 'Successful',
-                                                                                          detail: 'User Deleted',
+                                                                                          summary: 'Xong',
+                                                                                          detail: 'Xóa người dùng thành công',
                                                                                           life: 3000
                                                                            });
                                                             })
@@ -335,8 +344,8 @@ export default {
                                                                            console.log(err);
                                                                            this.$toast.add({
                                                                                           severity: 'error',
-                                                                                          summary: 'Error',
-                                                                                          detail: 'User Delete Failed',
+                                                                                          summary: 'Lỗi',
+                                                                                          detail: 'Xóa người dùng thất bại',
                                                                                           life: 3000
                                                                            });
                                                             });
@@ -352,7 +361,7 @@ export default {
                                                                                           this.$toast.add({
                                                                                                          severity: 'success',
                                                                                                          summary: 'Successful',
-                                                                                                         detail: 'Users Deleted',
+                                                                                                         detail: 'Xóa người dùng thành công',
                                                                                                          life: 3000
                                                                                           });
                                                                            })
@@ -361,7 +370,7 @@ export default {
                                                                                           this.$toast.add({
                                                                                                          severity: 'error',
                                                                                                          summary: 'Error',
-                                                                                                         detail: 'Users Delete Failed',
+                                                                                                         detail: 'Xóa người dùng thất bại',
                                                                                                          life: 3000
                                                                                           });
                                                                            });
@@ -384,8 +393,8 @@ export default {
                                                                                                          location.reload();
                                                                                                          this.$toast.add({
                                                                                                                         severity: 'success',
-                                                                                                                        summary: 'Successful',
-                                                                                                                        detail: 'User Updated',
+                                                                                                                        summary: 'Xong',
+                                                                                                                        detail: 'Cập nhật thành công',
                                                                                                                         life: 3000
                                                                                                          });
                                                                                           })
@@ -393,8 +402,8 @@ export default {
                                                                                                          console.log(err);
                                                                                                          this.$toast.add({
                                                                                                                         severity: 'error',
-                                                                                                                        summary: 'Error',
-                                                                                                                        detail: 'User Update Failed',
+                                                                                                                        summary: 'Lỗi',
+                                                                                                                        detail: 'Cập nhật thất bại',
                                                                                                                         life: 3000
                                                                                                          });
                                                                                           });
