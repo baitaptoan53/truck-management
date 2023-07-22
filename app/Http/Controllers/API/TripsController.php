@@ -11,17 +11,22 @@ class TripsController extends Controller
     public function index()
     {
         // bảng invoices có cột trip_id, bảng trips có cột id tôi muốn lấy tất cả các cột của bảng trips và thêm cả cột total_amount của bảng invoices 
-        $trips = Trip::join('invoices', 'trips.id', '=', 'invoices.trip_id')
-            ->select('trips.*', 'invoices.total_amount')
-            ->get();
-    
+        // $trips = Trip::join('invoices', 'trips.id', '=', 'invoices.trip_id')
+        //     ->select('trips.*', 'invoices.total_amount')
+        //     ->get();
+        $trips = Trip::all();
         return response()->json($trips);
     }
     public function update(Request $request, $id)
     {
         $trip = Trip::find($id);
         $trip->update($request->all());
-        dd($trip);
         return response()->json($trip);
+    }
+    public function store(Request $request)
+    {
+        $trip = Trip::create($request->all());
+        return response()->json($trip);
+
     }
 }

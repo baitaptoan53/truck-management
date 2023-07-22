@@ -181,8 +181,7 @@
                                                                            </div>
                                                                            <div class="p-field">
                                                                                           <label for="year">Năm sản xuất</label>
-                                                                                          <Calendar dateFormat="yy" view="year"
-                                                                                                         id="year" v-model="truck.year"
+                                                                                          <InputText id="year" v-model="truck.year"
                                                                                                          :class="{ 'p-invalid': submitted && !truck.year }"
                                                                                                          required />
                                                                                           <div v-if="submitted && !truck.year"
@@ -213,13 +212,14 @@
                                                                                           </div>
                                                                            </div>
                                                                            <div class="p-field">
-                                                                                          <label for="registration_date">Ngày mua
+                                                                                          <label for="purchase_date">Ngày mua
                                                                                                          xe</label>
-                                                                                          <Calendar id="registration_date"
-                                                                                                         v-model="truck.registration_date"
-                                                                                                         :class="{ 'p-invalid': submitted && !truck.registration_date }"
+                                                                                          <Calendar id="purchase_date"
+                                                                                                         dateFormat="dd-mm-yy"
+                                                                                                         v-model="truck.purchase_date"
+                                                                                                         :class="{ 'p-invalid': submitted && !truck.purchase_date }"
                                                                                                          required showIcon />
-                                                                                          <div v-if="submitted && !truck.registration_date"
+                                                                                          <div v-if="submitted && !truck.purchase_date"
                                                                                                          class="p-invalid">Ngày mua xe
                                                                                           </div>
                                                                            </div>
@@ -227,6 +227,7 @@
                                                                                           <label for="registration_date">Ngày đăng
                                                                                                          ký</label>
                                                                                           <Calendar id="registration_date"
+                                                                                                         dateFormat="dd-mm-yy"
                                                                                                          v-model="truck.registration_date"
                                                                                                          :class="{ 'p-invalid': submitted && !truck.registration_date }"
                                                                                                          required showIcon />
@@ -302,7 +303,6 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { FilterMatchMode } from 'primevue/api';
-import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 export default {
                setup() {
@@ -319,7 +319,17 @@ export default {
                                              deleteTrucksDialog: false,
                                              submitted: false,
                                              truckDialog: false,
-                                             date: null,
+                                             truck: {
+                                                            id: null,
+                                                            manufacturer: null,
+                                                            model: null,
+                                                            year: null,
+                                                            license_plate: null,
+                                                            vin_number: null,
+                                                            purchase_date: null,
+                                                            registration_date: null,
+                                                            curent_mileage: null,
+                                             },
                                              filters: {
                                                             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
                                                             manufacturer: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -436,6 +446,8 @@ export default {
                                                                                           });
                                                             }
                                                             else {
+                                                                           this.truck.purchase_date = this.truck.purchase_date.toISOString().slice(0, 10);
+                                                                           this.truck.registration_date = this.truck.registration_date.toISOString().slice(0, 10);
                                                                            axios.post("http://127.0.0.1:8000/api/trucks", this.truck)
                                                                                           .then(res => {
                                                                                                          this.$toast.add({
@@ -467,27 +479,7 @@ export default {
                                              this.submitted = false;
                                              this.truckDialog = true;
                               },
-                              onRowEditSave(e) {
-                                             const data = e.data;
-                                             axios.put(`http://127.0.0.1:8000/api/trucks/${data.id}`, data)
-                                                            .then(res => {
-                                                                           this.$toast.add({
-                                                                                          severity: "success",
-                                                                                          summary: "Thành công",
-                                                                                          detail: "Cập nhật xe thành công",
-                                                                                          life: 3000,
-                                                                           });
-                                                            })
-                                                            .catch(err => {
-                                                                           console.log(err);
-                                                                           this.$toast.add({
-                                                                                          severity: "error",
-                                                                                          summary: "Thất bại",
-                                                                                          detail: "Cập nhật xe thất bại",
-                                                                                          life: 3000,
-                                                                           });
-                                                            });
-                              },
+                              
                               editTruck(truck) {
                                              this.truck = { ...truck };
                                              this.truckDialog = true;

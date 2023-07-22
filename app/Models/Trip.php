@@ -20,6 +20,8 @@ class Trip extends Model
         'status',
         'created_at',
         'updated_at',
+        'total_distance',
+        'total_amount',
     ];
     public function trip_invoice()
     {
