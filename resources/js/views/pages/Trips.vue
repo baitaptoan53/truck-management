@@ -91,7 +91,7 @@
                                                                                           <template
                                                                                                          #filter="{ filterModel, filterCallback }">
                                                                                                          <InputText v-model="filterModel.value"
-                                                                                                                        type="text"
+                                                                                                                        type="number"
                                                                                                                         @input="filterCallback()"
                                                                                                                         class="p-column-filter"
                                                                                                                         placeholder="Tìm theo điểm đến" />
@@ -105,7 +105,7 @@
                                                                                           <template
                                                                                                          #filter="{ filterModel, filterCallback }">
                                                                                                          <InputText v-model="filterModel.value"
-                                                                                                                        type="text"
+                                                                                                                        type="number"
                                                                                                                         @input="filterCallback()"
                                                                                                                         class="p-column-filter"
                                                                                                                         placeholder="Tìm theo khoảng cách" />
@@ -118,10 +118,10 @@
                                                                                           <template
                                                                                                          #filter="{ filterModel, filterCallback }">
                                                                                                          <InputText v-model="filterModel.value"
-                                                                                                                        type="text"
+                                                                                                                        type="number"
                                                                                                                         @input="filterCallback()"
                                                                                                                         class="p-column-filter"
-                                                                                                                        placeholder="Tìm theo khoảng cách" />
+                                                                                                                        placeholder="Tìm theo tổng tiền" />
                                                                                           </template>
                                                                            </column>
                                                                            <Column :exportable="false" style="min-width:9rem">

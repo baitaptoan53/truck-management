@@ -51,4 +51,5 @@ Route::controller(TripsController::class)->group(function () {
 Route::controller(MaintenanceController::class)->group(function () {
     Route::get('/maintenances', 'index');
     Route::post('/maintenances', 'store');
+    Route::put('/maintenances/{id}', 'update');
 });

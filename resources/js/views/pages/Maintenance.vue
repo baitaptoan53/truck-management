@@ -222,7 +222,6 @@ export default {
                                                             if (this.maintenance.id) {
                                                                            axios.put("http://127.0.0.1:8000/api/maintenances/" + this.maintenance.id, this.maintenance)
                                                                                           .then(res => {
-                                                                                                         const index = this.maintenances.findIndex(item => item.id === this.maintenance.id);
                                                                                                          this.$toast.add({
                                                                                                                         severity: "success",
                                                                                                                         summary: "Thành công",

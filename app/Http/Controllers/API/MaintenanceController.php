@@ -24,4 +24,10 @@ class MaintenanceController extends Controller
         $maintenance = Maintenance::create($request->all());
         return response()->json($maintenance);
     }
+    public function update(Request $request, $id)
+    {
+        $maintenance = Maintenance::find($id);
+        $maintenance->update($request->all());
+        return response()->json($maintenance);
+    }
 }
