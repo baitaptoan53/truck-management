@@ -15,6 +15,17 @@ class TruckController extends Controller
     }
     public function store(Request $request)
     {
+        // $request->validate([
+        //     'manufacturer' => 'required|string|max:255|min:3',
+        //     'model' => 'required|string|max:255|min:3',
+        //     'year' => 'required|integer',
+        //     'license_plate' => 'required|string|max:255|min:3',
+        //     'vin_number' => 'required|string|max:255|min:3',
+        //     'purchase_date' => 'required|date',
+        //     'registration_date' => 'required|date',
+        //     'curent_mileage' => 'required|integer',
+        // ]);
+
         $truck = Truck::create([
             'manufacturer' => $request->manufacturer,
             'model' => $request->model,
