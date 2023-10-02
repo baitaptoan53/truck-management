@@ -8,6 +8,7 @@ use App\Http\Controllers\API\MaintenanceController;
 use App\Http\Controllers\API\TripsController;
 use App\Http\Controllers\API\TruckController;
 use App\Http\Controllers\API\UsersController;
+use App\Http\Controllers\API\PlacesController;
 use App\Models\Invoice;
 use App\Models\Trip;
 use App\Models\User;
@@ -52,4 +53,10 @@ Route::controller(MaintenanceController::class)->group(function () {
     Route::get('/maintenances', 'index');
     Route::post('/maintenances', 'store');
     Route::put('/maintenances/{id}', 'update');
+});
+Route::controller(PlacesController::class)->group(function(){
+    Route::get('/places', 'index');
+    Route::post('/places', 'store');
+    Route::put('/places/{id}', 'update');
+    Route::delete('/places/{id}', 'delete');
 });

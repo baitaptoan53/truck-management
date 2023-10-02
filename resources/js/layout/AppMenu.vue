@@ -11,13 +11,26 @@ const model = ref([
     {
         label: 'Quản lý',
         items: [{ label: 'Người dùng', icon: 'pi pi-users', to: '/users' },
-        { label: 'Xe', icon: 'pi pi-car', to: '/cars' },
+            {
+                label: 'Xe',
+                icon: 'pi pi-car',
+                items: [
+                    {
+                        label: 'Danh sách xe',
+                        icon: 'pi pi-list',
+                        to: '/cars'
+                    },
+                    {
+                        label: 'Chuyến xe', icon: 'pi pi-car', to: '/trips'
+                    },
+                    {
+                        label: 'Bảo trì', icon: 'pi pi-briefcase', to: '/maintenance'
+                    }
+                ]
+            },
         { label: 'Hóa đơn', icon: 'pi pi-file', to: '/bills' },
-        { label: 'Chuyến xe', icon: 'pi pi-car', to: '/trips' },
             { label: 'Trạng thái', icon: 'pi pi-briefcase', to: '/status' },
-        {label: 'Bảo trì', icon: 'pi pi-briefcase', to: '/maintenance'},
-
-
+            {label: 'Địa điểm', icon: 'pi pi-map', to: '/places'},
         ]
     },
 ]);

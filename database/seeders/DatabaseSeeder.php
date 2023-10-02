@@ -16,14 +16,14 @@ class DatabaseSeeder extends Seeder
     {
         $faker = Faker::create('vi_VN');
         foreach (range(1, 100) as $index) {
-            // DB::table('users')->insert([
-            //     'name' => $faker->name,
-            //     'phone'=> $faker->phoneNumber,
-            //     'email' => $faker->unique()->safeEmail,
-            //     'password' => $faker->password,
-            //     'role' => $faker->randomElement(['admin', 'driver']),
-            //     'status'=> $faker->randomElement(['active', 'inactive']),
-            // ]);
+             DB::table('users')->insert([
+                 'name' => $faker->name,
+                 'phone'=> $faker->phoneNumber,
+                 'email' => $faker->unique()->safeEmail,
+                 'password' => $faker->password,
+                 'role' => $faker->randomElement(['admin', 'driver']),
+                 'status'=> $faker->randomElement(['active', 'inactive']),
+             ]);
             DB::table('truck')->insert([
                 'manufacturer' => $faker->randomElement(['Huyndai', 'Kia', 'Toyota', 'Mitsubishi', 'Isuzu']),
                 'model' => $faker->randomElement(['Sando', 'I10', 'City', 'SVJ', 'Dmax']),
