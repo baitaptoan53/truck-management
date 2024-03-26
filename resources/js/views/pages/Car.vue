@@ -7,7 +7,7 @@
                            :rowsPerPageOptions="[5, 10, 20, 50]" stripedRows
                            removableSort paginator :rows="5" filterDisplay="row"
                            :loading="loading" v-model:filters="filters" dataKey="id"
-                           :globalFilterFields="['manufacturer', 'model', 'year', 'license_plate', 'vin_number', 'registration_date', 'curent_mileage']"
+                           :globalFilterFields="['manufacturer', 'photo','model', 'year', 'license_plate', 'vin_number', 'registration_date', 'curent_mileage']"
                            v-model:selection="selectedTrucks" ref="dt"
                            @row-edit-save="onRowEditSave" @row-select="onRowSelect">
                     <template #header>
@@ -33,14 +33,10 @@
                                         label="Tải tệp CSV"
                                         @click="exportCSV($event)"/>
                             </div>
-                            <span
-                                class="p-input-icon-left">
-                                                                                                                        <i
-                                                                                                                            class="pi pi-search"/>
-                                                                                                                        <InputText
-                                                                                                                            v-model="filters['global'].value"
-                                                                                                                            placeholder="Từ khóa"/>
-                                                                                                         </span>
+                            <span class="p-input-icon-left">
+                                <i class="pi pi-search"/>
+                                <InputText v-model="filters['global'].value" placeholder="Từ khóa"/>
+                            </span>
                         </div>
                     </template>
                     <template #empty> Không có xe nào</template>
@@ -61,6 +57,19 @@
                                        @input="filterCallback()"
                                        class="p-column-filter"
                                        placeholder="Tìm hãng xe"/>
+                        </template>
+                    </Column>
+                    <Column field="photo" header="Ảnh" sortable>
+                        <template #body="{ data }">
+                            <img :src="data.photo ? data.photo : 'layout/images/default-image.jpg'"  alt="Ảnh xe" width="100px" height="100px">
+                        </template>
+                        <template
+                            #filter="{ filterModel, filterCallback }">
+                            <InputText v-model="filterModel.value"
+                                       type="text"
+                                       @input="filterCallback()"
+                                       class="p-column-filter"
+                                       placeholder="Tìm ảnh"/>
                         </template>
                     </Column>
                     <Column field="model" header="Nhãn hiệu" sortable>
@@ -250,6 +259,13 @@
                             tại không được để trống
                         </div>
                     </div>
+                    <div class="p-field">
+                        <label for="photo">Ảnh</label>
+                            <FileUpload v-model="truck.photo" mode="basic" :multiple="false" :maxFileSize="1000000" accept="image/*"
+                                        chooseLabel="Thêm ảnh">
+                            </FileUpload>
+                    </div>
+
                     <template #footer>
                         <Button label="Hủy" icon="pi pi-times"
                                 class="p-button-text"
@@ -332,6 +348,7 @@ export default {
                 purchase_date: null,
                 registration_date: null,
                 curent_mileage: null,
+                photo: null,
             },
             filters: {
                 global: {value: null, matchMode: FilterMatchMode.CONTAINS},
@@ -342,6 +359,7 @@ export default {
                 vin_number: {value: null, matchMode: FilterMatchMode.STARTS_WITH},
                 registration_date: {value: null, matchMode: FilterMatchMode.STARTS_WITH},
                 curent_mileage: {value: null, matchMode: FilterMatchMode.STARTS_WITH},
+                photo: {value: null, matchMode: FilterMatchMode.STARTS_WITH},
 
             },
         };
@@ -351,7 +369,7 @@ export default {
             .then(res => {
                 this.trucks = res.data;
                 this.loading = false;
-
+                console.log(res.data);
             })
             .catch(err => {
                 console.log(err);
@@ -458,6 +476,7 @@ export default {
                                 detail: "Thêm xe thành công",
                                 life: 3000,
                             });
+                            console.log(res.data);
                             this.truckDialog = false;
                             this.truck = {};
                             this.submitted = false;

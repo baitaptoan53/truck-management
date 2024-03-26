@@ -101,7 +101,7 @@
                     </Column>
                 </DataTable>
                 <Dialog v-model:visible="placeDialog" :style="{ width: '450px' }"
-                        header="Chỉnh sủa xe" :modal="true" class="p-fluid">
+                        header="Chỉnh sửa địa điểm" :modal="true" class="p-fluid">
                     <div class="p-field">
                         <label for="name">Tên địa điểm</label>
                         <InputText id="name"
@@ -118,8 +118,7 @@
                                    :class="{ 'p-invalid': submitted && !place.description }"
                                    required/>
                         <div v-if="submitted && !place.description"
-                             class="p-invalid">Mô tả
-                            không được để trống
+                             class="p-invalid">Mô tả không được để trống
                         </div>
                     </div>
                     <div class="p-field">
@@ -140,7 +139,7 @@
                                 @click="savePlace()"/>
                     </template>
                 </Dialog>
-                <Dialog v-model:visible="deletePlaceDialog" modal header="Xóa xe"
+                <Dialog v-model:visible="deletePlaceDialog" modal header="Xóa địa điểm"
                         :style="{ width: '450px' }">
                     <div class="confirmation-content">
                         <i class="pi pi-exclamation-triangle p-mr-3"
@@ -158,7 +157,7 @@
                                 @click="deletePlace"/>
                     </template>
                 </Dialog>
-                <Dialog v-model:visible="deletePlacesDialog" modal header="Xóa xe"
+                <Dialog v-model:visible="deletePlacesDialog" modal header="Xóa địa điểm"
                         :style="{ width: '450px' }">
                     <div class="confirmation-content">
                         <i class="pi pi-exclamation-triangle p-mr-3"
@@ -294,6 +293,8 @@ export default {
                 if (this.place.id) {
                     axios.put(`http://127.0.0.1:8000/api/places/${this.place.id}`, this.place)
                         .then(res => {
+                            let index = this.places.findIndex(place => place.id === this.place.id);
+                            this.places.splice(index, 1, res.data);
                             this.$toast.add({
                                 severity: "success",
                                 summary: "Thành công",

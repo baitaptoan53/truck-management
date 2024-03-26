@@ -82,6 +82,10 @@ app.component('Toolbar', Toolbar)
 app.component('FileUpload', FileUpload)
 app.component('ProgressSpinner', ProgressSpinner)
 
+router.beforeEach((to, from, next) => {
+    document.title = to.meta.title || 'Truck Management';
+    next();
+});
 app.use(router)
 
 app.mount('#app')
